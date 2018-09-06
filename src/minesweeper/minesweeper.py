@@ -2,15 +2,17 @@ import sys
 
 import gamestate
 
-GAME_SIZE = 3 
-MINE_CHANCE = 0.1
+GAME_SIZE = 6 
+MINE_CHANCE = 0.15
 
 BOMB_GRAPHIC = "*"
 SPACE_GRAPHIC = "."
 UNREVEALED_GRAPHIC = "?"
 
 def drawBoard(board: gamestate.GameState, fog = True):
-    print("\033c MOONSWEEPER")
+    print("\033c \033[1mMOONSWEEPER\033[0m")
+    print()
+    print()
 
     headerText = "  "
     for x in range(board.board_size):
@@ -30,18 +32,14 @@ def drawBoard(board: gamestate.GameState, fog = True):
                 rowText += UNREVEALED_GRAPHIC
 
             elif cell.mine:
-                rowText += BOMB_GRAPHIC
+                rowText += "\033[31m" + BOMB_GRAPHIC + "\033[0m"
 
             elif cell.adjacent == 0:
                 rowText += SPACE_GRAPHIC
             else:
-                rowText += str(cell.adjacent)
+                rowText += "\033[36m" + str(cell.adjacent) + "\033[0m"
 
         print(rowText)
-
-    sys.stdout.flush()
-
-    pass
 
 def makeMove(board, x, y):
     board.reveal(gamestate.Coordinate(x, y))
@@ -57,6 +55,12 @@ board = gamestate.GameState(GAME_SIZE, MINE_CHANCE)
 while not isWon(board):
 
     drawBoard(board)
+
+    print()
+    print("type coordinate to reveal (xy) then press return")
+    print()
+
+    sys.stdout.flush()
 
     command = sys.stdin.readline()
 

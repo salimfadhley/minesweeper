@@ -41,7 +41,7 @@ def drawBoard(board: gamestate.GameState, fog = True):
     pass
 
 def makeMove(board, x, y):
-    return board.doMove(gamestate.Coordinate(x, y))
+    board.reveal(gamestate.Coordinate(x, y))
 
 def isWon(board):
     return False
@@ -49,7 +49,7 @@ def isWon(board):
 
 # board = engine.makeBoard()
 
-board = gamestate.GameState(5, 0.2)
+board = gamestate.GameState(5, 0.1)
 
 while not isWon(board):
 
@@ -78,12 +78,14 @@ while not isWon(board):
         print("invalid input")
     
     try:
-        board = makeMove(board, x, y)
+        makeMove(board, x, y)
     except:
 
         drawBoard(board, fog = False)
 
         print("BANG YOU DIED.")
+
+        sys.exit()
 
 drawBoard(board)
 

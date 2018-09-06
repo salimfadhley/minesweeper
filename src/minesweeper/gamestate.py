@@ -1,3 +1,4 @@
+import itertools
 import random
 from collections import namedtuple
 from typing import Sequence
@@ -13,6 +14,10 @@ class YouHaveExploded(RuntimeError):
     """
 
 class GameState:
+
+    @staticmethod
+    def _count_grid(g:Sequence[Sequence[int]]):
+        return sum(itertools.chain(*g))
 
     @staticmethod
     def _make_grid(size):
@@ -65,6 +70,13 @@ class GameState:
             raise YouHaveExploded("There was a mine at %r" % c)
         self._set_state_in_grid(self.revealed, c, 1)
         return self.get_state_of_cell(c)
+
+    def add_mine(self, c):
+        self._set_state_in_grid(self.mines, c, 1)
+
+    def cells_remaining(self):
+        return self.board_size ** 2 - \
+               (self._count_grid(self.mines) + self._count_grid(self.revealed))
 
 
 

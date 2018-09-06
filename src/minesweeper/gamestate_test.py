@@ -17,6 +17,15 @@ class TestGameState(unittest.TestCase):
         self.assertEqual(r.mine, 0)
         self.assertEqual(r.adjacent, 0)
 
+    def test_remain0(self):
+        b = GameState(4, 0)
+        self.assertEqual(b.cells_remaining(), 16)
+
+    def test_remain1(self):
+        b = GameState(4, 0)
+        b.reveal(Coordinate(0,0))
+        self.assertEqual(b.cells_remaining(), 15)
+
 
 if __name__ == "__main__":
     unittest.main()

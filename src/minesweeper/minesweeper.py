@@ -2,6 +2,9 @@ import sys
 
 import gamestate
 
+GAME_SIZE = 3 
+MINE_CHANCE = 0.1
+
 BOMB_GRAPHIC = "*"
 SPACE_GRAPHIC = "."
 UNREVEALED_GRAPHIC = "?"
@@ -44,12 +47,12 @@ def makeMove(board, x, y):
     board.reveal(gamestate.Coordinate(x, y))
 
 def isWon(board):
-    return False
+    return board.cells_remaining() == 0 
 
 
 # board = engine.makeBoard()
 
-board = gamestate.GameState(5, 0.1)
+board = gamestate.GameState(GAME_SIZE, MINE_CHANCE)
 
 while not isWon(board):
 
@@ -90,4 +93,4 @@ while not isWon(board):
 drawBoard(board)
 
 if isWon(board):
-    print("YAY")
+    print("YAY YOU WON")

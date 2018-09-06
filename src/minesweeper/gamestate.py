@@ -6,6 +6,12 @@ CellState = namedtuple("CellState", ["mine", "revealed", "adjacent"])
 
 Coordinate = namedtuple("Coordinate", ["x", "y"])
 
+
+class YouHaveExploded(RuntimeError):
+    """
+    You shizz be ganked
+    """
+
 class GameState:
 
     @staticmethod
@@ -15,6 +21,21 @@ class GameState:
     @staticmethod
     def _lookup_in_grid(g, c:Coordinate)->int:
         return g[c.x][c.y]
+
+    @staticmethod
+    def _set_state_in_grid(g, c:Coordinate, v:int)->None:
+        g[c.x][c.y] = v
+
+    def __init__(self, board_size:int, mine_probability:float=0.1):
+        self.mines = self._make_grid(board_size)
+        self.revealed = self._make_grid(board_size)
+        self.board_size:int = board_size
+
+        for row in self.mines:
+            for i in range(board_size):
+                if random.random() < mine_probability:
+                    row[i] = 1
+
 
     @staticmethod
     def _get_adjacent_coordinates(c:Coordinate, board_size:int)->Sequence[Coordinate]:
@@ -31,24 +52,22 @@ class GameState:
 
         return coordinates
 
-
-
-    def __init__(self, board_size:int, mine_probability:float=0.1):
-        self.mines = self._make_grid(board_size)
-        self.revealed = self._make_grid(board_size)
-        self.board_size:int = board_size
-
-        for row in self.mines:
-            for i in range(board_size):
-                if random.random() < mine_probability:
-                    row[i] = 1
-
     def get_state_of_cell(self, c:Coordinate) -> CellState:
         return CellState(
             self._lookup_in_grid(self.mines, c),
             self._lookup_in_grid(self.revealed, c),
             sum(self._lookup_in_grid(self.mines, adj) for adj in self._get_adjacent_coordinates(c, self.board_size))
         )
+
+    def reveal(self, c:Coordinate):
+        cell = self.get_state_of_cell(c)
+        if cell.mine:
+            raise YouHaveExploded("There was a mine at %r" % c)
+        self._set_state_in_grid(self.revealed, c, 1)
+        return self.get_state_of_cell(c)
+
+
+
 
 
 

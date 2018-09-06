@@ -1,15 +1,18 @@
-import sys
+"""a minesweeper"""
 
+import sys
 import gamestate
 
-GAME_SIZE = 6 
+GAME_SIZE = 6
 MINE_CHANCE = 0.15
 
 BOMB_GRAPHIC = "*"
 SPACE_GRAPHIC = "."
 UNREVEALED_GRAPHIC = "?"
 
-def drawBoard(board: gamestate.GameState, fog = True):
+def drawBoard(board: gamestate.GameState, fog=True):
+    """draw the board"""
+
     print("\033c \033[1mMOONSWEEPER\033[0m")
     print()
     print()
@@ -21,7 +24,7 @@ def drawBoard(board: gamestate.GameState, fog = True):
     print(headerText)
 
     for y in range(board.board_size):
-        
+
         rowText = str(y) + " "
 
         for x in range(board.board_size):
@@ -45,56 +48,62 @@ def makeMove(board, x, y):
     board.reveal(gamestate.Coordinate(x, y))
 
 def isWon(board):
-    return board.cells_remaining() == 0 
+    return board.cells_remaining() == 0
 
 
 # board = engine.makeBoard()
 
-board = gamestate.GameState(GAME_SIZE, MINE_CHANCE)
+def mainLoop():
+    """main loop"""
 
-while not isWon(board):
+    board = gamestate.GameState(GAME_SIZE, MINE_CHANCE)
+
+    while not isWon(board):
+
+        drawBoard(board)
+
+        print()
+        print("type coordinate to reveal (xy) then press return")
+        print()
+
+        sys.stdout.flush()
+
+        command = sys.stdin.readline()
+
+        command = command.rstrip()
+
+        if command == "quit":
+            sys.exit()
+
+        if len(command) > 2:
+            print("coordinate too long")
+            continue
+
+        if len(command) < 2:
+            print("coordinate too short")
+            continue
+
+        try:
+            x = int(command[0])
+            y = int(command[1])
+
+        except:
+
+            continue
+
+        try:
+            makeMove(board, x, y)
+        except:
+
+            drawBoard(board, fog=False)
+
+            print("BANG YOU DIED.")
+
+            sys.exit()
 
     drawBoard(board)
 
-    print()
-    print("type coordinate to reveal (xy) then press return")
-    print()
+    if isWon(board):
+        print("YAY YOU WON")
 
-    sys.stdout.flush()
-
-    command = sys.stdin.readline()
-
-    command = command.rstrip()
-
-    if command == "quit":
-        sys.exit()
-
-    if len(command) > 2:
-        print("coordinate too long")
-        continue
-
-    if len(command) < 2:
-        print("coordinate too short")
-        continue
-
-    try:
-        x = int(command[0])
-        y = int(command[1])
-
-    except:
-        print("invalid input")
-    
-    try:
-        makeMove(board, x, y)
-    except:
-
-        drawBoard(board, fog = False)
-
-        print("BANG YOU DIED.")
-
-        sys.exit()
-
-drawBoard(board)
-
-if isWon(board):
-    print("YAY YOU WON")
+mainLoop()

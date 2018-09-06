@@ -18,8 +18,20 @@ class GameState:
 
     @staticmethod
     def _get_adjacent_coordinates(c:Coordinate, board_size:int)->Sequence[Coordinate]:
-        all_x = [x for x in [c.x-1, c.x, c.x+1] if x >= 0 and x < board_size)]
-        all_y = [y for y in [c.y-1, c.y, c.y+1] if y >= 0 and y < board_size)]
+        all_x = [x for x in [c.x-1, c.x, c.x+1] if x >= 0 and x < board_size]
+        all_y = [y for y in [c.y-1, c.y, c.y+1] if y >= 0 and y < board_size]
+
+        coordinates = []
+
+        for x in all_x:
+            for y in all_y:
+                cc = Coordinate(x,y)
+                if cc != c:
+                    coordinates.append(cc)
+
+        return coordinates
+
+
 
     def __init__(self, board_size:int, mine_probability:float=0.1):
         self.mines = self._make_grid(board_size)
